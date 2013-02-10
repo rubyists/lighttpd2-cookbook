@@ -1,0 +1,2 @@
+#!/bin/sh
+exec <%= node['lighttpd2']['prefix'] %>/sbin/lighttpd2 -c <%= node['lighttpd2']['etc'] %>/angel.conf 2>&1
