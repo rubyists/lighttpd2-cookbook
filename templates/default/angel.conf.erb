@@ -1,5 +1,5 @@
 instance {
-        user "www-data";
+        user "<%= node['lighttpd2']['run_as'] %>";
         max-open-files 16384;
         config "<%= node['lighttpd2']['etc'] %>/lighttpd.conf";
 
@@ -8,5 +8,10 @@ instance {
 #       env ( "G_SLICE=always-malloc", "G_DEBUG=gc-friendly" );
 #       wrapper ("/usr/bin/valgrind", "--leak-check=full", "--show-reachable=yes", "--leak-resolution=high" );
 }
-allow-listen { ip "0.0.0.0/0:443"; }
+<% node['lighttpd2']['addresses'].each do |address| -%>
+allow-listen { ip "<%= address %>"; }
+<% end %>
+<% node['lighttpd2']['openssl']['hosts'].each do |host| -%>
+allow-listen { ip "<%= host[:listen] %>"; }
+<% end %>
 
