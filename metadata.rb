@@ -11,7 +11,7 @@ recipe "lighttpd2_vhost", "Sets up a vhost for serving through lighttpd (proxy o
   supports os
 end
 
-%w{ build-essential }.each do |cb|
+%w{ build-essential runit }.each do |cb|
   depends cb
 end
 
