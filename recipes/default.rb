@@ -49,9 +49,22 @@ directory node['lighttpd2']['conf_dir'] do
   owner node['lighttpd2']['run_as']
 end
 
+execute "restart_lighttpd2" do
+  action :nothing
+  command "sv t lighttpd2"
+  only_if { File.exists?("#{node['runit']['service_dir']}/lighttpd2/supervise/ok") }
+end
+
+execute "restart_lighttpd2_log" do
+  action :nothing
+  command "sv t #{node['runit']['service_dir']}/lighttpd2/log"
+  only_if { File.exists?("#{node['runit']['service_dir']}/lighttpd2/log/supervise/ok") }
+end
+
 template "#{node['lighttpd2']['etc']}/lighttpd.conf" do
   source "lighttpd.conf.erb"
   owner node['lighttpd2']['run_as']
+  notifies :run, 'execute[restart_lighttpd2]'
 end
 
 template "#{node['lighttpd2']['etc']}/angel.conf" do
@@ -152,14 +165,3 @@ link "#{node['runit']['service_dir']}/lighttpd2" do
   to "#{node['runit']['sv_dir']}/lighttpd2"
 end
 
-execute "restart_lighttpd2" do
-  action :nothing
-  command "sv t lighttpd2"
-  only_if { File.exists?("#{node['runit']['service_dir']}/lighttpd2/supervise/ok") }
-end
-
-execute "restart_lighttpd2_log" do
-  action :nothing
-  command "sv t #{node['runit']['service_dir']}/lighttpd2/log"
-  only_if { File.exists?("#{node['runit']['service_dir']}/lighttpd2/log/supervise/ok") }
-end
