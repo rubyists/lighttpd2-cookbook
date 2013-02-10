@@ -11,7 +11,7 @@ end
 bash "compile_lighttpd2" do
   cwd "#{node['lighttpd2']['build_prefix']}/lighttpd2"  
   code <<-EOF
-    [ -d #{node['lighttpd2']['prefix']}/lighttpd2 ] && mv #{node['lighttpd2']['prefix']}/lighttpd2 #{node['lighttpd2']['prefix']}/lighttpd2.#{Time.to_i}
+    [ -d #{node['lighttpd2']['prefix']}/lighttpd2 ] && mv #{node['lighttpd2']['prefix']}/lighttpd2 #{node['lighttpd2']['prefix']}/lighttpd2.#{Time.new.to_i}
     ./autogen.sh
     ./configure --with-lua --with-openssl --prefix=#{node['lighttpd2']['prefix']}
     make
