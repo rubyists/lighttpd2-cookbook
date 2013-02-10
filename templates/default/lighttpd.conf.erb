@@ -8,9 +8,8 @@ setup {
         listen "<%= address %>";
         <% end %>
         openssl [
-          "listen" => "0.0.0.0:443",
-          "pemfile" => "<%= node['lighttpd2']['etc'] %>/server.pem"<% if File.exists?("%s/certs.pem" % node['lighttpd2']['etc']) -%>,
-          "ca-file" => "<%= node['lighttpd2']['etc'] %>/certs.pem"
+        <% node['lighttpd2']['openssl']['hosts'].each do |host| %>
+          <%= host.map { |(k,v)| '"%s" => "%s"' % [k, v] }.join(",\n          ") %>
         <% end -%>
         ];
 
