@@ -4,6 +4,9 @@ setup {
     <%= node['lighttpd2']['modules'].map { |m| '"mod_%s"' % m }.join(",\n    ") %>
   );
         lua.plugin "core.lua";
+        <% node['lighttpd2']['listen_addresses'].each do |address| %>
+        listen "<%= address %>";
+        <% end %>
         openssl [
           "listen" => "0.0.0.0:443",
           "pemfile" => "<%= node['lighttpd2']['etc'] %>/server.pem"<% if File.exists?("%s/certs.pem" % node['lighttpd2']['etc']) -%>,
@@ -19,10 +22,20 @@ setup {
 
 }
 
-
-include "/opt/lighttpd2/etc/mimetypes.conf";
+include "<%= node['lighttpd2']['etc'] %>/mimetypes.conf";
 docroot "/var/www";
-index ("index.html", "index.htm");
+index (<%= node["lighttpd2"]["index_files"].map { |n| %Q{"#{n}"} }.join(", ") %>);
+
+<% if node['lighttpd2']['ssl_redirect'] %>
+if request.scheme == "http" {
+    if request.query == "" {
+        redirect "https://%{request.host}%{enc:request.path}";
+    } else {
+        redirect "https://%{request.host}%{enc:request.path}?%{request.query}";
+    }
+}
+<% end %>
+
 <% if node['lighttpd2']['applications'].size > 0 %>
 
   <% node['lighttpd2']['applications'].each do |app| %>
