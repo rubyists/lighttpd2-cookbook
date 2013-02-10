@@ -11,3 +11,4 @@ default['lighttpd2']['index_files'] = %w{index.html index.html}
 default['lighttpd2']['applications'] = []
 default['lighttpd2']['run_as'] = "www-data"
 default['lighttpd2']['git_reference'] = "master"
+default['lighttpd2']['ssl_redirect'] = false
